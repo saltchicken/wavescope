@@ -3,7 +3,7 @@ import zmq
 import numpy as np
 import time
 
-import .bridge
+from . import bridge
 
 class Publisher:
     def __init__(self, port=5655):
