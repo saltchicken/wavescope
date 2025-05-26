@@ -1,4 +1,4 @@
-import sender
+import .sender
 
 def main():
     print("Main function")
