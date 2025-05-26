@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-Time FFT with Plotly</title>
+  <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+  <style>
+    body {
+      background: #111;
+      color: #ccc;
+      margin: 0;
+      font-family: sans-serif;
+    }
+    #chart {
+      width: 100vw;
+      height: 60vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="chart"></div>
+
+  <script>
+    const layout = {
+      title: {
+        text: 'Real-Time FFT',
+        font: { color: '#ccc' }
+      },
+      plot_bgcolor: '#1e1e1e',
+      paper_bgcolor: '#1e1e1e',
+      xaxis: {
+        title: 'Frequency (Hz)',
+        color: '#ccc',
+        gridcolor: '#222',
+      },
+      yaxis: {
+        title: 'Magnitude',
+        range: [0, 100],
+        color: '#ccc',
+        gridcolor: '#222',
+      }
+    };
+
+    // Initial empty data
+    const data = [{
+      x: [],
+      y: [],
+      mode: 'lines',
+      line: { color: 'cyan' },
+      name: 'Magnitude'
+    }];
+
+    Plotly.newPlot('chart', data, layout, { responsive: true });
+
+    const ws = new WebSocket("ws://localhost:8765");
+    ws.binaryType = "arraybuffer";
+
+    ws.onmessage = (event) => {
+      const buffer = event.data;
+      const totalLen = buffer.byteLength / 4;
+      const halfLen = totalLen / 2;
+
+      const dataArray = new Float32Array(buffer);
+      const freqs = Array.from(dataArray.slice(0, halfLen));
+      const mags = Array.from(dataArray.slice(halfLen));
+
+      Plotly.update('chart', {
+        x: [freqs],
+        y: [mags]
+      });
+    };
+  </script>
+</body>
+</html>
+
