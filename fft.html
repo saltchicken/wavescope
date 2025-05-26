@@ -1,0 +1,66 @@
+<!-- fft_plot.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-Time FFT</title>
+  <link rel="stylesheet" href="https://unpkg.com/uplot/dist/uPlot.min.css" />
+  <style>
+    body { background: #111; color: #ccc; margin: 0; font-family: sans-serif; }
+    #chart { width: 100vw; height: 60vh; }
+    .uplot {
+      background-color: #1e1e1e;
+    }
+    .uplot .u-legend {
+      background-color: #2a2a2a;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div id="chart"></div>
+
+  <script src="https://unpkg.com/uplot/dist/uPlot.iife.min.js"></script>
+  <script>
+    const opts = {
+      width: window.innerWidth,
+      height: window.innerHeight * 0.6,
+      title: "Real-Time FFT",
+      scales: {
+        x: { time: false },
+        y: { auto: false, min: 0, max: 100 }
+      },
+      series: [
+        {},
+        {
+          label: "Magnitude",
+          stroke: "cyan",
+        }
+      ],
+      axes: [
+        { stroke: "#888", grid: { stroke: "#222" } },
+        { stroke: "#888", grid: { stroke: "#222" } },
+      ],
+    };
+
+    let freqs = new Float32Array(1024);
+    let mags = new Float32Array(1024);
+
+    const u = new uPlot(opts, [freqs, mags], document.getElementById("chart"));
+
+    const ws = new WebSocket("ws://localhost:8765");
+    ws.binaryType = "arraybuffer";
+
+    ws.onmessage = (event) => {
+      const buffer = event.data;
+      const totalLen = buffer.byteLength / 4;
+      const halfLen = totalLen / 2;
+
+      const data = new Float32Array(buffer);
+      freqs = data.slice(0, halfLen);
+      mags = data.slice(halfLen);
+
+      u.setData([freqs, mags]);
+    };
+  </script>
+</body>
+</html>
