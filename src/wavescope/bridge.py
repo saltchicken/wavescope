@@ -3,6 +3,14 @@ import websockets
 import zmq
 import zmq.asyncio
 
+class Publisher:
+    def __init__(self, port=5655):
+        self.context = zmq.Context()
+        self.publisher = self.context.socket(zmq.PUB)
+        # TODO: Test with localhost
+        self.publisher.bind(f"tcp://*:{port}")
+        self.server_task = asyncio.create_task(start_server())
+
 async def handler(ws):
     ctx = zmq.asyncio.Context()
     subscriber = ctx.socket(zmq.SUB)

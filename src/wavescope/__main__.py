@@ -17,7 +17,7 @@ async def run():
     # ws = wavescope.WaveScope()
     publisher = wavescope.Publisher()
     task = asyncio.create_task(my_task(publisher.publisher))
-    await asyncio.gather(task, publisher.bridge_task)
+    await asyncio.gather(task, publisher.server_task)
 
 
 def main():

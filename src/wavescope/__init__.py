@@ -1,1 +1,1 @@
-from .sender import Publisher
+from .bridge import Publisher
