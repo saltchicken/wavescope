@@ -5,7 +5,7 @@ import time
 def main():
     context = zmq.Context()
     publisher = context.socket(zmq.PUB)
-    publisher.bind("tcp://*:5555")  # Bind to all interfaces on port 5555
+    publisher.bind("tcp://*:5655")  # Bind to all interfaces on port 5555
 
     while True:
         # Example FFT data (1024 bins)
