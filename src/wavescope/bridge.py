@@ -17,10 +17,24 @@ async def handler(ws):
     subscriber.connect("tcp://localhost:5655")  # Adjust to your ZMQ publisher address
     subscriber.setsockopt_string(zmq.SUBSCRIBE, "")  # Subscribe to all topics
 
-    try:
+
+    async def receive_and_forward():
         while True:
             msg = await subscriber.recv()
-            await ws.send(msg)
+            await ws.send(msg
+
+    async def handle_topic_selection():
+        async for message in ws:
+            print(f"Received topic selection: {message}")
+            topic = message.decode()
+            print(f"Subscribing to topic: {topic}")
+            # subscriber.setsockopt_string(zmq.SUBSCRIBE, topic)
+    try:
+        await asyncio.gather(
+            receive_and_forward(),
+            handle_topic_selection()
+        )
+
     finally:
         subscriber.close()
         ctx.term()
