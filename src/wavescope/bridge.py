@@ -26,9 +26,7 @@ async def handler(ws):
     async def handle_topic_selection():
         async for message in ws:
             print(f"Received topic selection: {message}")
-            topic = message.decode()
-            print(f"Subscribing to topic: {topic}")
-            # subscriber.setsockopt_string(zmq.SUBSCRIBE, topic)
+            # subscriber.setsockopt_string(zmq.SUBSCRIBE, message)
     try:
         await asyncio.gather(
             receive_and_forward(),
