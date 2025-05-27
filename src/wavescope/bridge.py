@@ -21,7 +21,7 @@ async def handler(ws):
     async def receive_and_forward():
         while True:
             msg = await subscriber.recv()
-            await ws.send(msg
+            await ws.send(msg)
 
     async def handle_topic_selection():
         async for message in ws:
