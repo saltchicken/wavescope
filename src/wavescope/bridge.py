@@ -7,14 +7,15 @@ class Publisher:
     def __init__(self, port=5655):
         self.context = zmq.Context()
         self.publisher = self.context.socket(zmq.PUB)
+        self.port = port
         # TODO: Test with localhost
-        self.publisher.bind(f"tcp://*:{port}")
+        self.publisher.bind(f"tcp://*:{self.port}")
         self.server_task = asyncio.create_task(start_server())
 
 async def handler(ws):
     ctx = zmq.asyncio.Context()
     subscriber = ctx.socket(zmq.SUB)
-    subscriber.connect("tcp://localhost:5655")  # Adjust to your ZMQ publisher address
+    subscriber.connect(f"tcp://localhost:{self.port}")  # Adjust to your ZMQ publisher address
     subscriber.setsockopt_string(zmq.SUBSCRIBE, "")  # Subscribe to all topics
 
     async def receive_and_forward():
