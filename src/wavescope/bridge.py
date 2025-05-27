@@ -17,7 +17,6 @@ async def handler(ws):
     subscriber.connect("tcp://localhost:5655")  # Adjust to your ZMQ publisher address
     subscriber.setsockopt_string(zmq.SUBSCRIBE, "")  # Subscribe to all topics
 
-
     async def receive_and_forward():
         while True:
             msg = await subscriber.recv()
@@ -27,17 +26,16 @@ async def handler(ws):
         async for message in ws:
             print(f"Received topic selection: {message}")
             # subscriber.setsockopt_string(zmq.SUBSCRIBE, message)
+
     try:
         await asyncio.gather(
             receive_and_forward(),
             handle_topic_selection()
         )
-
     except websockets.exceptions.ConnectionClosed:
         print("Client disconnected")
     except Exception as e:
         print(f"Error: {e}")
-
     finally:
         subscriber.close()
         ctx.term()
