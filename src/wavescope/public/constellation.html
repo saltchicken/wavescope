@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-Time Constellation Plot</title>
+  <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+  <style>
+    body {
+      background: #111;
+      color: #ccc;
+      margin: 0;
+      font-family: sans-serif;
+    }
+    #constellation {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <div id="constellation"></div>
+
+  <script>
+    const layout = {
+      title: { text: 'Constellation Plot', font: { color: '#ccc' } },
+      plot_bgcolor: '#1e1e1e',
+      paper_bgcolor: '#1e1e1e',
+      xaxis: {
+        title: 'In-phase (I)',
+        color: '#ccc',
+        gridcolor: '#222',
+        range: [-2, 2]
+      },
+      yaxis: {
+        title: 'Quadrature (Q)',
+        color: '#ccc',
+        gridcolor: '#222',
+        range: [-2, 2]
+      }
+    };
+
+    const data = [{
+      x: [],
+      y: [],
+      mode: 'markers',
+      type: 'scattergl',
+      marker: { color: 'lime', size: 3 },
+      name: 'I/Q Points'
+    }];
+
+    Plotly.newPlot('constellation', data, layout, { responsive: true });
+
+    const ws = new WebSocket("ws://localhost:8765");
+    ws.binaryType = "arraybuffer";
+
+    ws.onmessage = (event) => {
+      const dataArray = new Float32Array(event.data);
+      const points = dataArray.length / 2;
+
+      const i = [], q = [];
+      for (let j = 0; j < points; j++) {
+        i.push(dataArray[2 * j]);
+        q.push(dataArray[2 * j + 1]);
+      }
+
+      Plotly.update('constellation', {
+        x: [i],
+        y: [q]
+      });
+    };
+  </script>
+</body>
+</html>
+

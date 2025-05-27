@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Real-Time FFT with Plotly</title>
+  <title>Real-Time Signal with Plotly</title>
   <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
   <style>
     body {
@@ -15,7 +15,7 @@
       height: 60vh;
     }
   </style>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
 </head>
 <body>
   <div id="chart"></div>
@@ -23,32 +23,33 @@
   <script>
     const layout = {
       title: {
-        text: 'Real-Time FFT',
+        text: 'Real-Time Signal',
         font: { color: '#ccc' }
       },
       plot_bgcolor: '#1e1e1e',
       paper_bgcolor: '#1e1e1e',
       xaxis: {
-        title: 'Frequency (Hz)',
+        title: 'Sample Index',
         color: '#ccc',
         gridcolor: '#222',
       },
       yaxis: {
-        title: 'Magnitude',
-        // range: [0, 100],
-        autorange: true,
+        title: 'Amplitude',
+        range: [-3, 3],
+        autorange: false,
         color: '#ccc',
         gridcolor: '#222',
       }
     };
 
-    // Initial empty data
+    // Use scattergl for better performance on large data
     const data = [{
       x: [],
       y: [],
       mode: 'lines',
       line: { color: 'cyan' },
-      name: 'Magnitude'
+      name: 'Signal',
+      type: 'scattergl'
     }];
 
     Plotly.newPlot('chart', data, layout, { responsive: true });
@@ -58,17 +59,27 @@
 
     ws.onmessage = (event) => {
       const buffer = event.data;
-      const totalLen = buffer.byteLength / 4;
-      const halfLen = totalLen / 2;
-
       const dataArray = new Float32Array(buffer);
-      const freqs = Array.from(dataArray.slice(0, halfLen));
-      const mags = Array.from(dataArray.slice(halfLen));
+
+      // Create x axis as sample indices
+      const x = Array.from({length: dataArray.length}, (_, i) => i);
 
       Plotly.update('chart', {
-        x: [freqs],
-        y: [mags]
+        x: [x],
+        y: [Array.from(dataArray)]
       });
+    };
+
+    ws.onerror = (err) => {
+      console.error('WebSocket error:', err);
+    };
+
+    ws.onopen = () => {
+      console.log('WebSocket connection opened.');
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket connection closed.');
     };
   </script>
 </body>

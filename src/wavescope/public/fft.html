@@ -62,6 +62,10 @@
 
       u.setData([freqs, mags]);
     };
+
+    ws.onopen = () => {
+      ws.send("uplot fft");
+    };
   </script>
 </body>
 </html>
