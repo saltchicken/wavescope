@@ -15,7 +15,7 @@ class Publisher:
 async def handler(ws):
     ctx = zmq.asyncio.Context()
     subscriber = ctx.socket(zmq.SUB)
-    subscriber.connect(f"tcp://localhost:{self.port}")  # Adjust to your ZMQ publisher address
+    subscriber.connect("tcp://localhost:5655")  # Adjust to your ZMQ publisher address
     subscriber.setsockopt_string(zmq.SUBSCRIBE, "")  # Subscribe to all topics
 
     async def receive_and_forward():
