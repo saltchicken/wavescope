@@ -33,6 +33,11 @@ async def handler(ws):
             handle_topic_selection()
         )
 
+    except websockets.exceptions.ConnectionClosed:
+        print("Client disconnected")
+    except Exception as e:
+        print(f"Error: {e}")
+
     finally:
         subscriber.close()
         ctx.term()
