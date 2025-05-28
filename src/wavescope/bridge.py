@@ -5,7 +5,7 @@ import zmq
 import zmq.asyncio
 
 class Publisher:
-    def __init__(self, host="localhost", port=8766):
+    def __init__(self, host="localhost", port=8765):
         self.host = host
         self.port = port
         self.queue = asyncio.Queue()
