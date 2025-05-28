@@ -8,7 +8,7 @@ class Publisher:
     def __init__(self, host="localhost", port=8765):
         self.host = host
         self.port = port
-        self.queue = asyncio.Queue()
+        self.queue = asyncio.Queue(maxsize=1)
         self.server_task = asyncio.create_task(self.start_server())
         self.data = {"test": "testing"}
 
