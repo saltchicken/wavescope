@@ -19,10 +19,8 @@ async def handler(ws):
     subscriber.setsockopt_string(zmq.SUBSCRIBE, "")  # Subscribe to all topics
 
     async def receive_and_forward():
-        print("HELLAHJSDKFJASLDKJFALSKDJF")
         while True:
             msg = await subscriber.recv()
-            print(msg)
             await ws.send(msg)
 
     async def handle_topic_selection():
