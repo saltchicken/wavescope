@@ -55,7 +55,6 @@
       if (typeof event.data === "string") {
         const data = JSON.parse(event.data);
         if (data.type === "init") {
-          console.log(data.data)
           freqs = new Float32Array(data.data);
         }
         // ws.send("Returning the test");
