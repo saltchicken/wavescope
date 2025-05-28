@@ -5,10 +5,7 @@ import zmq
 import zmq.asyncio
 
 class Publisher:
-    def __init__(self, port=5655):
-        self.context = zmq.Context()
-        self.publisher = self.context.socket(zmq.PUB)
-        self.port = port
+    def __init__(self):
         self.queue = asyncio.Queue()
         self.server_task = asyncio.create_task(self.start_server())
         self.data = {"test": "testing"}
@@ -37,8 +34,7 @@ class Publisher:
         except Exception as e:
             print(f"Error: {e}")
         finally:
-            subscriber.close()
-            ctx.term()
+            print("Handle any cleanup that is necessary")
 
     async def start_server(self, host="localhost", port=8765):
         async with websockets.serve(self.handler, host, port):
