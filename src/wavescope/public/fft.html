@@ -62,13 +62,15 @@
       } else if (event.data instanceof ArrayBuffer) {
         
         const buffer = event.data;
-        const totalLen = buffer.byteLength / 4;
-        const halfLen = totalLen / 2;
+        // const totalLen = buffer.byteLength / 4;
+        // const halfLen = totalLen / 2;
 
-        const data = new Float32Array(buffer);
+        // const data = new Float32Array(buffer);
         // freqs = data.slice(0, halfLen);
-        mags = data.slice(halfLen);
+        // mags = data.slice(halfLen);
 
+        //TODO: Should I be making a new Float32Array every time for this?
+        mags = new Float32Array(buffer);
         u.setData([freqs, mags]);
       }
     };
