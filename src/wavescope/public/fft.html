@@ -52,19 +52,34 @@
     ws.binaryType = "arraybuffer";
 
     ws.onmessage = (event) => {
-      const buffer = event.data;
-      const totalLen = buffer.byteLength / 4;
-      const halfLen = totalLen / 2;
+      if (typeof event.data === "string") {
+        const data = JSON.parse(event.data);
+        if (data.type === "init") {
+          console.log(data.data)
+          freqs = new Float32Array(data.data);
+        }
+        // ws.send("Returning the test");
+        return;
+      } else if (event.data instanceof ArrayBuffer) {
+        
+        const buffer = event.data;
+        const totalLen = buffer.byteLength / 4;
+        const halfLen = totalLen / 2;
 
-      const data = new Float32Array(buffer);
-      freqs = data.slice(0, halfLen);
-      mags = data.slice(halfLen);
+        const data = new Float32Array(buffer);
+        // freqs = data.slice(0, halfLen);
+        mags = data.slice(halfLen);
 
-      u.setData([freqs, mags]);
+        u.setData([freqs, mags]);
+      }
     };
 
     ws.onopen = () => {
-      ws.send("uplot fft");
+      const message = {
+        type: "init",
+        data: "uplot"
+      }
+      ws.send(JSON.stringify(message));
     };
   </script>
 </body>
