@@ -5,7 +5,9 @@ import zmq
 import zmq.asyncio
 
 class Publisher:
-    def __init__(self):
+    def __init__(self, host="localhost", port=8766):
+        self.host = host
+        self.port = port
         self.queue = asyncio.Queue()
         self.server_task = asyncio.create_task(self.start_server())
         self.data = {"test": "testing"}
@@ -36,9 +38,9 @@ class Publisher:
         finally:
             print("Handle any cleanup that is necessary")
 
-    async def start_server(self, host="localhost", port=8765):
-        async with websockets.serve(self.handler, host, port):
-            print(f"WebSocket server running on ws://{host}:{port}")
+    async def start_server(self):
+        async with websockets.serve(self.handler, self.host, self.port):
+            print(f"WebSocket server running on ws://{self.host}:{self.port}")
             await asyncio.Future()  # Run forever
 
 if __name__ == "__main__":
