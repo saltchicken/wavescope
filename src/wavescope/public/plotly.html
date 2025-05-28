@@ -35,8 +35,8 @@
       },
       yaxis: {
         title: 'Magnitude',
-        // range: [0, 100],
-        autorange: true,
+        range: [0, 100],
+        autorange: false,
         color: '#ccc',
         gridcolor: '#222',
       }
@@ -57,19 +57,37 @@
     ws.binaryType = "arraybuffer";
 
     ws.onmessage = (event) => {
-      const buffer = event.data;
-      const totalLen = buffer.byteLength / 4;
-      const halfLen = totalLen / 2;
+      if (typeof event.data === "string") {
+        const data = JSON.parse(event.data);
+        if (data.type === "init") {
+          const freqs_data = new Float32Array(data.data);
+          freqs = Array.from(freqs_data);
+        }
+        // ws.send("Returning the test");
+        return;
+      } else if (event.data instanceof ArrayBuffer) {
+        
+        const buffer = event.data;
 
-      const dataArray = new Float32Array(buffer);
-      const freqs = Array.from(dataArray.slice(0, halfLen));
-      const mags = Array.from(dataArray.slice(halfLen));
+        //TODO: Should I be making a new Float32Array every time for this?
+        const dataArray = new Float32Array(buffer);
+        mags = Array.from(dataArray);
 
-      Plotly.update('chart', {
-        x: [freqs],
-        y: [mags]
-      });
+        Plotly.update('chart', {
+          x: [freqs],
+          y: [mags]
+        });
+      }
     };
+
+    ws.onopen = () => {
+      const message = {
+        type: "init",
+        data: "uplot"
+      }
+      ws.send(JSON.stringify(message));
+    };
+
   </script>
 </body>
 </html>
