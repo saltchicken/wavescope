@@ -1,0 +1,16 @@
+<!-- dist/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FFT Plot Package</title>
+  <link rel="stylesheet" href="https://unpkg.com/uplot/dist/uPlot.min.css" />
+  <meta charset="UTF-8" />
+</head>
+<body style="margin:0; background:#111; color:#ccc">
+  <div id="chart"></div>
+  <script type="module">
+    import { startFFTPlot } from './fftPlot.js';
+    startFFTPlot('chart');
+  </script>
+</body>
+</html>
